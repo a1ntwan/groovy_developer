@@ -1,0 +1,33 @@
+plugins {
+    id 'groovy'
+    id("io.ktor.plugin") version "2.2.2"
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+application {
+    mainClass.set("Main")
+}
+
+ktor {
+    fatJar {
+        archiveFileName.set("${rootProject.name}-fat.jar")
+    }
+}
+
+dependencies {
+    implementation project(':hw01-gradle')
+    implementation 'com.google.guava:guava:+'
+    implementation 'org.codehaus.groovy:groovy-all:3.0.11'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+test {
+    useJUnitPlatform()
+}
