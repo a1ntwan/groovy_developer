@@ -4,4 +4,6 @@ static void main(String[] args) {
 //  Bank.main(args)
 //  Converter.main(args)
   ServerExec.main(args)
+//  Converter.main(args)
+//DB.main(args)
 }

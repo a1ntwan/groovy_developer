@@ -25,6 +25,8 @@ dependencies {
     implementation project(':hw02-gradle')
     implementation project(':hw04-json-gradle')
     implementation project(':hw08-dsl-gradle')
+    implementation project(':hw05-orm-gradle')
+    implementation project(':hw08-example-gradle')
     implementation 'com.google.guava:guava:+'
     implementation 'org.codehaus.groovy:groovy-all:3.0.11'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
