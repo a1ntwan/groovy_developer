@@ -1,6 +1,5 @@
 plugins {
     id 'groovy'
-    id("io.ktor.plugin") version "2.2.2"
 }
 
 group 'org.example'
@@ -10,21 +9,7 @@ repositories {
     mavenCentral()
 }
 
-application {
-    mainClass.set("Main")
-}
-
-ktor {
-    fatJar {
-        archiveFileName.set("${rootProject.name}-fat.jar")
-    }
-}
-
 dependencies {
-    implementation project(':hw01-gradle')
-    implementation project(':hw02-gradle')
-    implementation project(':hw04-json-gradle')
-    implementation 'com.google.guava:guava:+'
     implementation 'org.codehaus.groovy:groovy-all:3.0.11'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
