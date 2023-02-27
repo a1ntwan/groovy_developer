@@ -17,9 +17,16 @@ import javax.sql.DataSource
 
 import static org.slf4j.LoggerFactory.getLogger
 
-final URL = "jdbc:postgresql://localhost:5432/homework"
-final USER = "postgres"
-final PASSWORD = "postgres"
+
+Properties properties = new Properties()
+File propertiesFile = new File('application.properties')
+propertiesFile.withInputStream {
+    properties.load(it)
+}
+
+final URL = "${properties.getProperty('URL')}"
+final USER = "${properties.getProperty('USER')}"
+final PASSWORD = "${properties.getProperty('PASSWORD')}"
 
 final Logger log = getLogger(HomeWork.class)
 

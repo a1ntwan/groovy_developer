@@ -62,20 +62,26 @@ class DriverManagerDataSource implements DataSource {
     }
 
     private void createConnectionPool(String url, String user, String pwd) {
+        Properties properties = new Properties()
+        File propertiesFile = new File('application.properties')
+        propertiesFile.withInputStream {
+            properties.load(it)
+        }
+
         def config = new HikariConfig();
         config.setJdbcUrl(url);
-        config.setConnectionTimeout(3000); //ms
-        config.setIdleTimeout(60000); //ms
-        config.setMaxLifetime(600000);//ms
-        config.setAutoCommit(false);
-        config.setMinimumIdle(5);
-        config.setMaximumPoolSize(10);
-        config.setPoolName("DemoHiPool");
-        config.setRegisterMbeans(true);
+        config.setConnectionTimeout(properties.getProperty('ConnectionTimeout').toInteger()); //ms
+        config.setIdleTimeout(properties.getProperty('IdleTimeout').toInteger()); //ms
+        config.setMaxLifetime(properties.getProperty('MaxLifetime').toInteger());//ms
+        config.setAutoCommit(properties.getProperty('AutoCommit').toBoolean());
+        config.setMinimumIdle(properties.getProperty('MinimumIdle').toInteger());
+        config.setMaximumPoolSize(properties.getProperty('MaximumPoolSize').toInteger());
+        config.setPoolName(properties.getProperty('PoolName'));
+        config.setRegisterMbeans(properties.getProperty('RegisterMbeans').toBoolean());
 
-        config.addDataSourceProperty("cachePrepStmts", "true");
-        config.addDataSourceProperty("prepStmtCacheSize", "250");
-        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+        config.addDataSourceProperty("cachePrepStmts", properties.getProperty('cachePrepStmts').toBoolean());
+        config.addDataSourceProperty("prepStmtCacheSize", properties.getProperty('prepStmtCacheSize').toInteger());
+        config.addDataSourceProperty("prepStmtCacheSqlLimit", properties.getProperty('prepStmtCacheSqlLimit').toInteger());
 
         config.setUsername(user);
         config.setPassword(pwd);

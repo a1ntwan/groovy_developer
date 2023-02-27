@@ -9,5 +9,6 @@ CREATE TABLE Client (
 
 CREATE TABLE Manager (
     no SERIAL PRIMARY KEY,
-    label varchar(50)
+    label varchar(50),
+    param1 varchar(50)
 );

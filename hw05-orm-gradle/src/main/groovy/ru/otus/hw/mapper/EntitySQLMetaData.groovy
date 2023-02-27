@@ -6,9 +6,9 @@ package ru.otus.hw.mapper;
 interface EntitySQLMetaData {
     String getSelectAllSql()
 
-    String getSelectByIdSql() // SELECT * FROM <CLient>  WHERE <Client.id> = ?
+    String getSelectByIdSql(long id) // SELECT * FROM <CLient>  WHERE <Client.id> = ?
 
     String getInsertSql(Map<String, String> values)
 
-    String getUpdateSql(Map<String, String> fields, long id)
+    String getUpdateSql(Map<String, String> fields, String primaryName, long id)
 }

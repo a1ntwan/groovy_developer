@@ -16,20 +16,23 @@ class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
     EntityClassMetaDataImpl(Class<T> clazz) {
         this.clazz = clazz
         this.constructor = findFirstConstructorWithoutparameters()
+        List <String> params = []
         clazz.metaClass.getProperties().each {
-            println(it.name)
+            params << it.name
         }
-        clazz   .declaredFields.each {println(it.name)}
-//        List<Field> fields = clazz.getProperties()['declaredFields']
-//        fields.each {
-//            if (it.getName() == findIdField().getName()){
-//                this.idField = it
-//            } else {
-//                println(it)
-//                this.withoutIdFiles << it
-//            }
-//        }
-
+        params -= 'class'
+        List<Field> fields = clazz.getProperties()['declaredFields']
+        fields.each {
+            if (it.getName() == findIdField().getName()){
+                this.idField = it
+            } else {
+                params.each {param ->
+                    if (param == it.getName()) {
+                        this.withoutIdFiles << it
+                    }
+                }
+            }
+        }
     }
 
     def findIdField() {

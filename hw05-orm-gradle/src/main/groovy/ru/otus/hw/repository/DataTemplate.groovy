@@ -1,12 +1,14 @@
 package ru.otus.hw.repository
 
+import java.sql.ResultSet
+
 /**
  * CRUD operations with database (like JdbcTemplate)
  */
 interface DataTemplate<T> {
     def findById(connection, long id);
 
-    List findAll(connection);
+    ResultSet findAll(connection);
 
     long insert(connection, object);
 

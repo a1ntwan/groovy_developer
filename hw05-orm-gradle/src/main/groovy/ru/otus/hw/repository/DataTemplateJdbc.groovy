@@ -3,7 +3,8 @@ package ru.otus.hw.repository
 import groovy.transform.Canonical
 import ru.otus.hw.mapper.EntityClassMetaData
 import ru.otus.hw.mapper.EntitySQLMetaData
-import ru.otus.hw.mapper.EntitySQLMetaDataImpl
+import java.sql.PreparedStatement
+import java.sql.ResultSet
 
 @Canonical
 class DataTemplateJdbc implements DataTemplate {
@@ -18,21 +19,26 @@ class DataTemplateJdbc implements DataTemplate {
     }
 
     @Override
-    def findById( connection, long id) {
-        return connection.execute(entitySQLMetaData.getSelectByIdSql())
+    ResultSet findById( connection, long id) {
+        PreparedStatement pst = connection.prepareStatement(entitySQLMetaData.getSelectByIdSql(id))
+        ResultSet rs = pst.executeQuery()
+        return rs
     }
 
     @Override
-    List findAll( connection) {
-        return connection.execute(entitySQLMetaData.getSelectAllSql())
+    ResultSet findAll( connection) {
+        PreparedStatement pst = connection.prepareStatement(entitySQLMetaData.getSelectAllSql())
+        ResultSet rs = pst.executeQuery()
+        return rs
     }
 
     @Override
     long insert( connection,  object) {
         Map map = object.properties
         map.remove(entityClassMetaData.idField.name)
-        connection.execute(entitySQLMetaData.getInsertSql(map))
-        return 0
+        PreparedStatement pst = connection.prepareStatement(entitySQLMetaData.getInsertSql(map))
+        pst.executeUpdate()
+        return 1
     }
 
     @Override
@@ -40,6 +46,7 @@ class DataTemplateJdbc implements DataTemplate {
         Map map = object.properties
         map.remove(entityClassMetaData.idField.name)
         Long id = object.properties.get(entityClassMetaData.idField.name) as long
-        connection.execute(entitySQLMetaData.getUpdateSql(map, id))
+        PreparedStatement pst = connection.prepareStatement(entitySQLMetaData.getUpdateSql(map, entityClassMetaData.idField.name, id))
+        pst.executeUpdate()
     }
 }
