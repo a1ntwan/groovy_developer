@@ -3,6 +3,7 @@ static void main(String[] args) {
 //  HelloOtus.main(args)
 //  Bank.main(args)
 //  Converter.main(args)
-  TodoList.main(args)
-//  ServerExec.main(args)
+// ServerExec.main(args)
+DB.main(args)
+//  TodoList.main(args)
 }
