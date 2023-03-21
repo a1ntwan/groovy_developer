@@ -6,11 +6,11 @@ class TaskTest extends GroovyTestCase {
 
     @Test
     void testMinus() {
-        Action testAction = new Action(activity: "test1", start: LocalDateTime.parse("01.01.2023 21:00", 'dd.MM.yyyy HH:mm'), duration: 3600)
+        Action testAction = new Action(activity: "test1", start: LocalDateTime.parse("14.04.2023 21:00", 'dd.MM.yyyy HH:mm'), duration: 3600)
 
         Task testTask = new Task(name: "test1",
-                start: LocalDateTime.parse("01.01.2023 21:00", 'dd.MM.yyyy HH:mm'),
-                finish: LocalDateTime.parse("01.01.2023 22:00", 'dd.MM.yyyy HH:mm'),
+                start: LocalDateTime.parse("14.04.2023 21:00", 'dd.MM.yyyy HH:mm'),
+                finish: LocalDateTime.parse("14.04.2023 22:00", 'dd.MM.yyyy HH:mm'),
                 actions: []
         )
 
@@ -22,11 +22,11 @@ class TaskTest extends GroovyTestCase {
 
     @Test
     void testPlus() {
-        Action testAction = new Action(activity: "test1", start: LocalDateTime.parse("01.01.2023 21:00", 'dd.MM.yyyy HH:mm'), duration: 3600)
+        Action testAction = new Action(activity: "test1", start: LocalDateTime.parse("14.04.2023 21:00", 'dd.MM.yyyy HH:mm'), duration: 3600)
 
         Task testTask = new Task(name: "test1",
-                start: LocalDateTime.parse("01.01.2023 21:00", 'dd.MM.yyyy HH:mm'),
-                finish: LocalDateTime.parse("01.01.2023 22:00", 'dd.MM.yyyy HH:mm'),
+                start: LocalDateTime.parse("14.04.2023 21:00", 'dd.MM.yyyy HH:mm'),
+                finish: LocalDateTime.parse("14.04.2023 22:00", 'dd.MM.yyyy HH:mm'),
                 actions: []
         )
 
