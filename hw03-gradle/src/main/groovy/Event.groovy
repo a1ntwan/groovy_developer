@@ -11,6 +11,10 @@ class Event {
     private TimerTask setTimer(Task task, Action action) {
         Timer timer = new Timer()
         long millis = ChronoUnit.MILLIS.between(this.currentDT, action.start)
+        if (millis > 2147483647) {
+            println("You can plan only up to 24 days !")
+            throw new UnsupportedOperationException()
+        }
         TimerTask eventTimer = timer.runAfter(millis as int) {
             println("NOTIFICATION: It's time for task: ${task.name} action: ${action.activity} !!!")
         }

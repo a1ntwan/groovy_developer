@@ -6,11 +6,11 @@ class EventTest extends GroovyTestCase {
 
     @Test
     void testCreateEvent() {
-        Action testAction1 = new Action(activity: "test1", start: LocalDateTime.parse("01.01.2024 21:00", 'dd.MM.yyyy HH:mm'), duration: 3600)
+        Action testAction1 = new Action(activity: "test1", start: LocalDateTime.parse("14.04.2023 21:00", 'dd.MM.yyyy HH:mm'), duration: 3600)
 
         Task testTask1 = new Task(name: "test1",
-                start: LocalDateTime.parse("01.01.2024 21:00", 'dd.MM.yyyy HH:mm'),
-                finish: LocalDateTime.parse("01.01.2024 22:00", 'dd.MM.yyyy HH:mm'),
+                start: LocalDateTime.parse("14.04.2023 21:00", 'dd.MM.yyyy HH:mm'),
+                finish: LocalDateTime.parse("14.04.2023 22:00", 'dd.MM.yyyy HH:mm'),
                 actions: []
         )
 
@@ -23,11 +23,11 @@ class EventTest extends GroovyTestCase {
 
     @Test
     void testTestCreateEvent() {
-        Action testAction2 = new Action(activity: "test1", start: LocalDateTime.parse("01.01.2024 21:00", 'dd.MM.yyyy HH:mm'), duration: 3600)
+        Action testAction2 = new Action(activity: "test1", start: LocalDateTime.parse("14.04.2023 21:00", 'dd.MM.yyyy HH:mm'), duration: 3600)
 
         Task testTask2 = new Task(name: "test1",
-                start: LocalDateTime.parse("01.01.2024 21:00", 'dd.MM.yyyy HH:mm'),
-                finish: LocalDateTime.parse("01.01.2024 22:00", 'dd.MM.yyyy HH:mm'),
+                start: LocalDateTime.parse("14.04.2023 21:00", 'dd.MM.yyyy HH:mm'),
+                finish: LocalDateTime.parse("14.04.2023 22:00", 'dd.MM.yyyy HH:mm'),
                 actions: []
         )
 
