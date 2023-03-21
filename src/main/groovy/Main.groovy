@@ -4,6 +4,6 @@ static void main(String[] args) {
 //  Bank.main(args)
 //  Converter.main(args)
 // ServerExec.main(args)
-DB.main(args)
+// DB.main(args)
 //  TodoList.main(args)
 }
