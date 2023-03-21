@@ -7,7 +7,7 @@ class Server {
 
     HttpServer create(String name, String description, int port, List<Mapping> maps) {
         String serverHello = name + "\n\n" + description + "\n"
-        HttpServer httpServer = HttpServer.create(new InetSocketAddress("127.0.0.1", port), 0)
+        HttpServer httpServer = HttpServer.create(new InetSocketAddress("0.0.0.0", port), 0)
         maps.each { mapping ->
             if (mapping.active == 'true') {
                 context(httpServer, mapping.url, 200, serverHello)
