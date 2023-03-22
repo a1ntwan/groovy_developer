@@ -1,5 +1,6 @@
 plugins {
     id 'groovy'
+    id 'com.google.cloud.tools.jib'
 }
 
 group 'org.example'
@@ -21,4 +22,31 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+jib {
+    from {
+        image = "gcr.io/distroless/java:debug"
+    }
+    to {
+        image = "a1ntwan/${rootProject.name}_hw05-orm-gradle"
+        tags = ["${project.version}"]
+    }
+    extraDirectories {
+        paths {
+            path {
+                from = file("./src/main/groovy/ru/otus/hw")
+                into = file("/hw05-orm-gradle/src/main/groovy/ru/otus/hw/")
+                includes = ["application.properties"]
+            }
+            path {
+                from = file("./src/main/resources/")
+                into = file("/hw05-orm-gradle/src/main/resources/")
+            }
+        }
+    }
+    container {
+        creationTime = Instant.now().toString()
+        workingDirectory = '/hw05-orm-gradle/src/main/groovy/ru/otus/hw/'
+    }
 }
