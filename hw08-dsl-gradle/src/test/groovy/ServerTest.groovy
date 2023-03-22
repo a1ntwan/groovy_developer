@@ -17,14 +17,14 @@ class ServerTest extends GroovyTestCase {
 
         HttpServer http = srv.create(config.name, config.description, config.http['port'].toInteger(), config.maps)
 
-        URLConnection get = new URL("http://127.0.0.1:8080/").openConnection()
+        URLConnection get = new URL("http://127.0.0.1:8081/").openConnection()
         get.setDoOutput(true)
         get.setRequestMethod("GET")
         int getRC = get.getResponseCode()
 
         assertEquals(200, getRC)
 
-        get = new URL("http://127.0.0.1:8080/login").openConnection()
+        get = new URL("http://127.0.0.1:8081/login").openConnection()
         get.setDoOutput(true)
         get.setRequestMethod("GET")
         getRC = get.getResponseCode()
