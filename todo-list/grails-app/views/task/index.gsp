@@ -47,11 +47,12 @@
                         <td>${info?.start}</td>
                         <td>${info?.finish}</td>
 
-                        %{--Table Actions --}%
+                        %{--Table Options --}%
                         <td>
                             <div class="btn-group">
-                                <g:link controller="task" action="edit" class="btn btn-secondary" id="${info.id}"><i class="fas fa-edit"></i></g:link>
                                 <g:link controller="task" action="delete" id="${info.id}" class="btn btn-secondary delete-confirmation"><i class="fas fa-trash"></i></g:link>
+                                <g:link controller="task" action="details" id="${info.id}" class="btn btn-secondary"><i class="fas fa-eye"></i></g:link>
+                                <g:link controller="task" action="edit" id="${info.id}" class="btn btn-secondary"><i class="fas fa-eye"></i></g:link>
                             </div>
                         </td>
                     </tr>

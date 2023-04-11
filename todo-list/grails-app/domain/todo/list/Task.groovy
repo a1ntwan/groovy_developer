@@ -1,32 +1,25 @@
 package todo.list
 
 import java.time.LocalDateTime
+import java.time.LocalDate
 
 class Task {
-
+    String name
+    LocalDate date
     LocalDateTime start
     LocalDateTime finish
-    String name
 
-    static hasMany = [action: Action]
+    static hasMany = [actions: Action]
 
     static constraints = {
-        start(nullable: false)
-        finish(nullable: false)
-        name(nullable: false)
+        name(nullable: false, blank: true)
+        date(nullable: false, blank: true)
+        start(nullable: false, blank: true)
+        finish(nullable: false, blank: true)
     }
 
-//    def beforeInsert() {
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern('dd.MM.yyyy HH:mm')
-//
-//        String dateTimeStart = "${this.stringDate} ${this.stringStart}"
-//        this.start = LocalDateTime.parse(dateTimeStart, formatter)
-//
-//        String dateTimeFinish = "${this.stringDate} ${this.stringFinish}"
-//        this.finish = LocalDateTime.parse(dateTimeFinish, formatter)
-//    }
-
-    def beforeUpdate() {
-
+    static mapping = {
+        version(false)
+        Action(cascade: 'all-delete-orphan', lazy: false)
     }
 }
