@@ -1,13 +1,15 @@
 package todo.list
 
+import grails.rest.Resource
+
 import java.time.LocalDateTime
 
+@Resource(uri='/events', formats=['json', 'xml'])
 class Event {
-    private LocalDateTime startTime
+
+    LocalDateTime startTime
 
     static constraints = {
-
-        startTime(nullable: false)
     }
 
     static mapping = {

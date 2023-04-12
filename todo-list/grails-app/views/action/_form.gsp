@@ -13,8 +13,14 @@
 <div class="form-group">
     <label><g:message code="action.start"/> *</label>
     <g:if test="${task}">
-    <g:field type="time" name="start" class="form-control" value="${task[num].model.start.toLocalTime()}" placeholder="Please enter the start time for your action in format HH:mm : "/>
-    <UIHelper:renderErrorMessage fieldName="start" model="${params.models[num]}" errorMessage="please.valid.time"/>
+        <g:if test="${task[num].model.start}">
+        <g:field type="time" name="start" class="form-control" value="${task[num].model.start.toLocalTime()}" placeholder="Please enter the start time for your action in format HH:mm : "/>
+        <UIHelper:renderErrorMessage fieldName="start" model="${params.models[num]}" errorMessage="please.valid.time"/>
+        </g:if>
+        <g:else>
+        <g:field type="time" name="start" class="form-control" value="${task[num].model.start}" placeholder="Please enter the start time for your action in format HH:mm : "/>
+        <UIHelper:renderErrorMessage fieldName="start" model="${params.models[num]}" errorMessage="please.valid.time"/>
+        </g:else>
     </g:if>
     <g:else>
     <g:field type="time" name="start" class="form-control" value="${action?.start}" placeholder="Please enter the start time for your action in format HH:mm : "/>
@@ -24,8 +30,14 @@
 <div class="form-group">
     <label><g:message code="action.finish"/> *</label>
     <g:if test="${task}">
-    <g:field type="time" name="finish" class="form-control" value="${task[num].model.finish.toLocalTime()}" placeholder="Please enter the finish time for your action in format HH:mm : "/>
-    <UIHelper:renderErrorMessage fieldName="finish" model="${params.models[num]}" errorMessage="please.valid.time"/>
+        <g:if test="${task[num].model.finish}">
+        <g:field type="time" name="finish" class="form-control" value="${task[num].model.finish.toLocalTime()}" placeholder="Please enter the finish time for your action in format HH:mm : "/>
+        <UIHelper:renderErrorMessage fieldName="finish" model="${params.models[num]}" errorMessage="please.valid.time"/>
+        </g:if>
+        <g:else>
+        <g:field type="time" name="finish" class="form-control" value="${task[num].model.finish}" placeholder="Please enter the finish time for your action in format HH:mm : "/>
+        <UIHelper:renderErrorMessage fieldName="finish" model="${params.models[num]}" errorMessage="please.valid.time"/>
+        </g:else>
     </g:if>
     <g:else>
     <g:field type="time" name="finish" class="form-control" value="${action?.finish}" placeholder="Please enter the finish time for your action in format HH:mm : "/>

@@ -13,11 +13,6 @@ class UIHelperTagLib {
         }
         String fieldName = attrs.fieldName
         String errorMessage = attrs.errorMessage ? g.message(code: attrs.errorMessage) : g.message(code: "invalid.input")
-        if (model) {
-            println('----------------------------------------------------------------------------')
-            println(model.errors)
-            println('----------------------------------------------------------------------------')
-        }
 
         if (model && model.errors && model.errors.getFieldError(fieldName)) {
             out << "<small class='form-text text-danger''><strong>${errorMessage}</strong></small>"

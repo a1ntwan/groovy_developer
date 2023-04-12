@@ -2,43 +2,16 @@ package todo.list
 
 import grails.gorm.transactions.Transactional
 import grails.web.servlet.mvc.GrailsParameterMap
-
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import com.google.common.base.Strings
 
 @Transactional
 class TaskService {
 
-    private def checkTaskDate(inputDate) {
-        if (inputDate) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern('yyyy-MM-dd')
-            LocalDate ldt = LocalDate.parse(inputDate, formatter)
-            if (ldt.isAfter(LocalDate.now())) {
-                return ldt
-            }
-        }
-        return null
-    }
-
-    private def checkStartFinishTaskDate(inputDate, inputStart, inputFinish) {
-        if ((inputStart) && (inputFinish)) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern('yyyy-MM-dd HH:mm')
-            LocalDateTime start = LocalDateTime.parse("${inputDate} ${inputStart}", formatter)
-            LocalDateTime finish = LocalDateTime.parse("${inputDate} ${inputFinish}", formatter)
-            if (start.toLocalTime().isBefore(finish.toLocalTime())) {
-                return [start, finish]
-            }
-        }
-        return [null, null]
-    }
-
     private def interactWithTask(Task task, params) {
         task.name = Strings.emptyToNull(params.name)
-        task.date = checkTaskDate(params.date)
-        task.start = checkStartFinishTaskDate(params.date, params.start, params.finish)[0]
-        task.finish = checkStartFinishTaskDate(params.date, params.start, params.finish)[1]
+        task.date = DateTimeChecker.checkTaskDate(params.date)
+        task.start = DateTimeChecker.checkStartFinishTaskDate(params.date, params.start, params.finish)[0]
+        task.finish = DateTimeChecker.checkStartFinishTaskDate(params.date, params.start, params.finish)[1]
         return task
     }
     

@@ -40,7 +40,12 @@ class TaskController extends RestfulController {
         } else {
             flash.message = AppUtil.infoMessage(g.message(code: "saved"))
             ActionController.task = response.task
-            ActionController.num = params.num.toInteger()
+            if (params.num) {
+                ActionController.num = params.num.toInteger()
+            } else {
+                params.num = 1
+                ActionController.num = params.num
+            }
             redirect(controller: "action", action: "create", params: [num: params.num])
         }
     }

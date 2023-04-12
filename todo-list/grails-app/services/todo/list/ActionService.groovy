@@ -5,35 +5,21 @@ import grails.gorm.transactions.Transactional
 import grails.web.servlet.mvc.GrailsParameterMap
 
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+
 
 @Transactional
 class ActionService {
 
-//    private def checkActionsDuration(ArrayList list, Task task){
-//        if (list.sum() > (task.finish.toLocalTime().toSecondOfDay() - task.start.toLocalTime().toSecondOfDay())) {
-//            println(list.sum())
-//            return null
-//        }
-//    }
-
-//    private def paramsSeparator(GrailsParameterMap params, int num){
-//        def actionsList = []
-//        num.eachWithIndex { a, i ->
-//            if (a[])
-//        }
-//    }
-
     private def interactWithAction(Action action, String activity, String start, String finish, Task task) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern('yyyy-MM-dd HH:mm')
         action.activity = Strings.emptyToNull(activity)
         action.task = task
-        action.start = LocalDateTime.parse("${task.date.toString()} ${start}", formatter)
-        action.finish = LocalDateTime.parse("${task.date.toString()} ${finish}", formatter)
+        action.start = DateTimeChecker.checkTaskStartFinishTaskDate(task.date, task.start, task.finish, start, finish)[0]
+        action.finish = DateTimeChecker.checkTaskStartFinishTaskDate(task.date, task.start, task.finish, start, finish)[1]
         return action
     }
 
     private def addTaskMultipleActions(GrailsParameterMap params, Task task, int num) {
+
         def range = 0..num-1
         def responses = []
 
@@ -44,6 +30,10 @@ class ActionService {
             if (action.validate()) {
                 if (!action.hasErrors()) {
                     task.addToActions(action)
+                    if (!getEvent(action.start)) {
+                        Event event = new Event(startTime: action.start)
+                        event.save()
+                    }
                     response.isSuccess = true
                 }
             }
@@ -61,6 +51,10 @@ class ActionService {
         if (action.validate()) {
             if (!action.hasErrors()) {
                 task.addToActions(action)
+                if (!getEvent(action.start)) {
+                    Event event = new Event(startTime: action.start)
+                    event.save()
+                }
                 response.isSuccess = true
             }
         }
@@ -70,6 +64,7 @@ class ActionService {
     }
 
     def save(params, Task task, int num) {
+
         def result = null
 
         if (params.getClass() == GrailsParameterMap) {
@@ -99,6 +94,10 @@ class ActionService {
         if (action.validate()) {
             action.save(flush: true)
             if (!action.hasErrors()){
+                if (!getEvent(action.start)) {
+                    Event event = new Event(startTime: action.start)
+                    event.save()
+                }
                 response.isSuccess = true
             }
         }
@@ -106,11 +105,17 @@ class ActionService {
     }
 
     def update(Action action, params) {
+        Event oldEvent = getEvent(action.start)
+        oldEvent.delete()
         action = interactWithAction(action, params.activity, params.start, params.finish, action.task)
         def response = AppUtil.saveResponse(false, action)
         if (action.validate()) {
             action.save(flush: true)
             if (!action.hasErrors()){
+                if (!getEvent(action.start)) {
+                    Event event = new Event(startTime: action.start)
+                    event.save()
+                }
                 response.isSuccess = true
             }
         }
@@ -120,6 +125,10 @@ class ActionService {
 
     def getById(Serializable id) {
         return Action.get(id)
+    }
+
+    def getEvent(LocalDateTime time) {
+        return Event.find { startTime == time }
     }
 
     def list(GrailsParameterMap params) {
@@ -160,6 +169,10 @@ class ActionService {
             if (action.validate()) {
                 if (!action.hasErrors()) {
                     task.addToActions(action)
+                    if (!getEvent(action.start)) {
+                        Event event = new Event(startTime: action.start)
+                        event.save()
+                    }
                     response.isSuccess = true
                 }
             }
