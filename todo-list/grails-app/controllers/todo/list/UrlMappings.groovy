@@ -49,8 +49,7 @@ class UrlMappings {
 //
 //        curl 'http://127.0.0.1:8080/events' -H "Accept: application/json"
 
-        "/"(view:"/index")
-//        "/"(controller: "task", action: "index")
+        "/"(controller: "task", action: "index")
         "500"(view:'/error')
         "404"(view:'/notFound')
     }

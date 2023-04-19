@@ -37,6 +37,10 @@ configurations {
     }
 }
 
+war {
+    archiveName = 'ROOT.war'
+}
+
 dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     compileOnly "io.micronaut:micronaut-inject-groovy"
@@ -47,7 +51,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-autoconfigure"
     implementation "org.grails:grails-core"
     implementation "org.springframework.boot:spring-boot-starter-actuator"
-    implementation "org.springframework.boot:spring-boot-starter-tomcat"
+    testImplementation "org.springframework.boot:spring-boot-starter-tomcat"
     implementation "org.grails:grails-web-boot"
     implementation "org.grails:grails-logging"
     implementation "org.grails:grails-plugin-rest"
@@ -135,7 +139,7 @@ apply plugin: "com.google.cloud.tools.jib"
 
 jib {
     from {
-        image = "tomcat:latest"
+        image = "tomcat:8.5"
     }
     to {
         image = "a1ntwan/${rootProject.name}_todo-list"
@@ -146,7 +150,7 @@ jib {
             path {
                 from = "./build/libs/"
                 into = "/usr/local/tomcat/webapps/"
-                includes = ["todo-list-0.1.war"]
+                includes = ["ROOT.war"]
             }
         }
     }
