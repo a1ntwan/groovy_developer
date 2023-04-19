@@ -5,16 +5,29 @@ import grails.gorm.transactions.Transactional
 import grails.web.servlet.mvc.GrailsParameterMap
 
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 
 @Transactional
 class ActionService {
 
     private def interactWithAction(Action action, String activity, String start, String finish, Task task) {
+        DateTimeFormatter dateTimeformatter = DateTimeFormatter.ofPattern('yyyy-MM-dd HH:mm')
+
         action.activity = Strings.emptyToNull(activity)
         action.task = task
-        action.start = DateTimeChecker.checkTaskStartFinishTaskDate(task.date, task.start, task.finish, start, finish)[0]
-        action.finish = DateTimeChecker.checkTaskStartFinishTaskDate(task.date, task.start, task.finish, start, finish)[1]
+        if (start == '') {
+            action.start = null
+        } else {
+            action.start = LocalDateTime.parse("${task.date} ${start}", dateTimeformatter)
+        }
+        if (finish == '') {
+            action.finish = null
+        } else {
+            action.finish = LocalDateTime.parse("${task.date} ${finish}", dateTimeformatter)
+            action.duration = ChronoUnit.SECONDS.between(action.start, action.finish)
+        }
         return action
     }
 
@@ -22,6 +35,8 @@ class ActionService {
 
         def range = 0..num-1
         def responses = []
+
+        task.actions = []
 
         range.each{ i ->
             Action action = new Action()
@@ -37,6 +52,7 @@ class ActionService {
                     response.isSuccess = true
                 }
             }
+
             responses << response
         }
         return [task, responses]
@@ -44,6 +60,8 @@ class ActionService {
 
     private def addTaskSingleAction(GrailsParameterMap params, Task task) {
         def responses = []
+
+        task.actions = []
 
         Action action = new Action()
         action = interactWithAction(action, params.activity, params.start, params.finish, task)
@@ -58,6 +76,7 @@ class ActionService {
                 response.isSuccess = true
             }
         }
+
         responses << response
 
         return [task, responses]
@@ -78,8 +97,9 @@ class ActionService {
         }
 
         def response = AppUtil.saveResponse(false, result[1])
-        if ((result[0].actions) && (result[0].actions.size() == num)) {
-            result[0].save(flush: true)
+//        if ((result[0].actions) && (result[0].actions.size() == num) && (result[0].duration >= result[0].actions*.duration.sum())) {
+        if ((result[0].actions) && (result[0].actions.size() == num) && (result[0].duration >= response.model*.model*.duration.sum())) {
+        result[0].save(flush: true)
             response.isSuccess = true
             return response
         }
@@ -161,6 +181,8 @@ class ActionService {
 
     private def addTaskActionsJSON(params, Task task) {
         def responses = []
+
+        task.actions = []
 
         params.actions.each{ i ->
             Action action = new Action()

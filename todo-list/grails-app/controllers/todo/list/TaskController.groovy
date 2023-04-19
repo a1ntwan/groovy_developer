@@ -15,7 +15,7 @@ class TaskController extends RestfulController {
 
     def index() {
         def response = taskService.list(params)
-        [taskList: response.list, total: response.count]
+        [taskList: response.list, total: response.count, byDate: response.byDate]
     }
 
     def details(Integer id) {

@@ -1,5 +1,6 @@
 buildscript {
     repositories {
+        mavenCentral()
         maven { url "https://plugins.gradle.org/m2/" }
         maven { url "https://repo.grails.org/grails/core" }
     }
@@ -8,6 +9,7 @@ buildscript {
         classpath "gradle.plugin.com.github.erdi.webdriver-binaries:webdriver-binaries-gradle-plugin:2.6"
         classpath "org.grails.plugins:hibernate5:7.3.0"
         classpath "com.bertramlabs.plugins:asset-pipeline-gradle:3.4.7"
+        classpath "com.google.cloud.tools:jib-gradle-plugin:3.3.1"
     }
 }
 
@@ -21,6 +23,7 @@ apply plugin:"org.grails.grails-web"
 apply plugin:"com.github.erdi.webdriver-binaries"
 apply plugin:"org.grails.grails-gsp"
 apply plugin:"com.bertramlabs.asset-pipeline"
+apply plugin:"com.google.cloud.tools.jib"
 
 repositories {
     mavenCentral()
@@ -126,4 +129,31 @@ tasks.withType(Test) {
 assets {
     minifyJs = true
     minifyCss = true
+}
+
+apply plugin: "com.google.cloud.tools.jib"
+
+jib {
+    from {
+        image = "tomcat:latest"
+    }
+    to {
+        image = "a1ntwan/${rootProject.name}_todo-list"
+        tags = ["${project.version}"]
+    }
+    extraDirectories {
+        paths {
+            path {
+                from = "./build/libs/"
+                into = "/usr/local/tomcat/webapps/"
+                includes = ["todo-list-0.1.war"]
+            }
+        }
+    }
+    container {
+        jvmFlags = ["-Dgrails.env=development"]
+        creationTime = Instant.now().toString()
+        ports = ['8080', '4372']
+        appRoot = '/usr/local/tomcat/webapps'
+    }
 }

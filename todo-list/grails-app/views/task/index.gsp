@@ -12,8 +12,8 @@
         <div class="btn-group">
             <g:form controller="task" action="index" method="GET">
                 <div class="input-group" id="search-area">
-                    <g:select name="colName" class="form-control" from="[name: 'Name', start: 'Start', finish: 'Finish']" value="${params?.colName}" optionKey="key" optionValue="value"/>
-                    <g:textField name="colValue" class="form-control" value="${params?.colValue}"/>
+                    <g:select name="colName" class="form-control" from="[date: 'Date']" value="${params?.colName}" optionKey="key" optionValue="value"/>
+                    <g:field type="date" name="colValue" class="form-control" value="${params?.colValue}"/>
                     <span class="input-group-btn">
                         <button class="btn btn-default" type="submit">Search</button>
                     </span>
@@ -41,12 +41,15 @@
             </tr>
             </thead>
             <tbody>
+                <g:set var="counter" value="${0}"/>
                 <g:each in="${taskList}" var="info">
+                <g:if test="${info?.start}">
+                <g:set var="counter" value="${counter + info.duration}"/>
+                </g:if>
                     <tr>
                         <td>${info?.name}</td>
                         <td>${info?.start}</td>
                         <td>${info?.finish}</td>
-
                         %{--Table Options --}%
                         <td>
                             <div class="btn-group">
@@ -57,8 +60,13 @@
                         </td>
                     </tr>
                 </g:each>
+                <g:if test="${byDate}">
+                <h3> Total busy time is: hours: ${counter / 3600} minutes: ${counter % 3600 / 60} </h3>
+                </g:if>
+                <br>
             </tbody>
         </table>
+
     %{--Pagination Area--}%
     <div class="paginate">
         <g:paginate total="${total ?: 0}" />

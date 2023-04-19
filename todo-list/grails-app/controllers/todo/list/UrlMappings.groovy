@@ -37,7 +37,7 @@ class UrlMappings {
 //
 //        ACTIONS:
 //
-//        curl -X POST 'http://127.0.0.1:8080/api/actions/add' -H "Content-Type: application/json" -d '{"task":"1","activity":"lol","start":"10:00","finish":"11:00"}'
+//        curl -X POST 'http://127.0.0.1:8080/api/actions/add' -H "Content-Type: application/json" -d '{"task":"1","activity":"activity","start":"10:00","finish":"11:00"}'
 //
 //        curl 'http://127.0.0.1:8080/tasks/1/actions/3' -H "Accept: application/json"
 //
@@ -50,6 +50,7 @@ class UrlMappings {
 //        curl 'http://127.0.0.1:8080/events' -H "Accept: application/json"
 
         "/"(view:"/index")
+//        "/"(controller: "task", action: "index")
         "500"(view:'/error')
         "404"(view:'/notFound')
     }

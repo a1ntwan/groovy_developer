@@ -65,9 +65,11 @@
                 <h2>Available Controllers:</h2>
                 <ul>
                     <g:each var="c" in="${grailsApplication.controllerClasses.sort { it.fullName } }">
+                        <g:if test="${ c.fullName == 'todo.list.TaskController'}">
                         <li class="controller">
-                            <g:link controller="${c.logicalPropertyName}">${c.fullName}</g:link>
+                            <g:link controller="${c.logicalPropertyName}">TODO LIST</g:link>
                         </li>
+                        </g:if>
                     </g:each>
                 </ul>
             </div>
