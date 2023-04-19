@@ -12,7 +12,7 @@
                     <th class="text-right"><g:message code="Task name"/></th><td class="text-left">${task.name}</td>
                     <td>
                         <div class="btn-group">
-                            <g:link controller="action" action="create" params="${[task: task.id, num: 1, add: true]}" class="btn btn-secondary"><i class="fas fa-eye"></i></g:link>
+                            <g:link controller="action" action="create" params="${[task: task.id, num: 1, add: true]}" class="btn btn-secondary"><i class="fas fa-plus-circle"></i></g:link>
                         </div>
                     </td>
                 </tr>
@@ -28,7 +28,7 @@
                         <td>
                             <div class="btn-group">
                                 <g:link controller="action" action="delete" id="${action.id}" class="btn btn-secondary delete-confirmation"><i class="fas fa-trash"></i></g:link>
-                                <g:link controller="action" action="edit" id="${action.id}" params="${[num: 1]}" class="btn btn-secondary"><i class="fas fa-eye"></i></g:link>
+                                <g:link controller="action" action="edit" id="${action.id}" params="${[num: 1]}" class="btn btn-secondary"><i class="fas fa-edit"></i></g:link>
                             </div>
                         </td>
                     </tr>
