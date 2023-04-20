@@ -157,7 +157,7 @@ jib {
     container {
         jvmFlags = ["-Dgrails.env=development"]
         creationTime = Instant.now().toString()
-        ports = ['8080', '4372']
+        ports = ['8080']
         appRoot = '/usr/local/tomcat/webapps'
     }
 }
