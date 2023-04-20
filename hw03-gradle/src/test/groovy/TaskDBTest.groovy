@@ -8,11 +8,11 @@ class TaskDBTest extends GroovyTestCase {
     void testPlus() {
         TaskDB db = new TaskDB()
 
-        Action testAction3 = new Action(activity: "test1", start: LocalDateTime.parse("14.04.2023 21:00", 'dd.MM.yyyy HH:mm'), duration: 3600)
+        Action testAction3 = new Action(activity: "test1", start: LocalDateTime.parse("10.05.2023 21:00", 'dd.MM.yyyy HH:mm'), duration: 3600)
 
         Task testTask3 = new Task(name: "test1",
-                start: LocalDateTime.parse("14.04.2023 21:00", 'dd.MM.yyyy HH:mm'),
-                finish: LocalDateTime.parse("14.04.2023 22:00", 'dd.MM.yyyy HH:mm'),
+                start: LocalDateTime.parse("10.05.2023 21:00", 'dd.MM.yyyy HH:mm'),
+                finish: LocalDateTime.parse("10.05.2023 22:00", 'dd.MM.yyyy HH:mm'),
                 actions: []
         )
 
@@ -27,11 +27,11 @@ class TaskDBTest extends GroovyTestCase {
     void testMinus() {
         TaskDB db = new TaskDB()
 
-        Action testAction4 = new Action(activity: "test1", start: LocalDateTime.parse("14.04.2023 21:00", 'dd.MM.yyyy HH:mm'), duration: 3600)
+        Action testAction4 = new Action(activity: "test1", start: LocalDateTime.parse("10.05.2023 21:00", 'dd.MM.yyyy HH:mm'), duration: 3600)
 
         Task testTask4 = new Task(name: "test1",
-                start: LocalDateTime.parse("14.04.2023 21:00", 'dd.MM.yyyy HH:mm'),
-                finish: LocalDateTime.parse("14.04.2023 22:00", 'dd.MM.yyyy HH:mm'),
+                start: LocalDateTime.parse("10.05.2023 21:00", 'dd.MM.yyyy HH:mm'),
+                finish: LocalDateTime.parse("10.05.2023 22:00", 'dd.MM.yyyy HH:mm'),
                 actions: []
         )
 
@@ -47,11 +47,11 @@ class TaskDBTest extends GroovyTestCase {
     void testGetTasksByDate() {
         TaskDB db = new TaskDB()
 
-        Action testAction5 = new Action(activity: "test1", start: LocalDateTime.parse("14.04.2023 21:00", 'dd.MM.yyyy HH:mm'), duration: 3600)
+        Action testAction5 = new Action(activity: "test1", start: LocalDateTime.parse("10.05.2023 21:00", 'dd.MM.yyyy HH:mm'), duration: 3600)
 
         Task testTask5 = new Task(name: "test1",
-                start: LocalDateTime.parse("14.04.2023 21:00", 'dd.MM.yyyy HH:mm'),
-                finish: LocalDateTime.parse("14.04.2023 22:00", 'dd.MM.yyyy HH:mm'),
+                start: LocalDateTime.parse("10.05.2023 21:00", 'dd.MM.yyyy HH:mm'),
+                finish: LocalDateTime.parse("10.05.2023 22:00", 'dd.MM.yyyy HH:mm'),
                 actions: []
         )
 
@@ -59,18 +59,18 @@ class TaskDBTest extends GroovyTestCase {
 
         db += testTask5
 
-        assertEquals(ArrayList, db.getTasksByDate('14.04.2023').getClass())
+        assertEquals(ArrayList, db.getTasksByDate('10.05.2023').getClass())
     }
 
     @Test
     void testGetNumTasksByDate() {
         TaskDB db = new TaskDB()
 
-        Action testAction6 = new Action(activity: "test1", start: LocalDateTime.parse("14.04.2023 21:00", 'dd.MM.yyyy HH:mm'), duration: 3600)
+        Action testAction6 = new Action(activity: "test1", start: LocalDateTime.parse("10.05.2023 21:00", 'dd.MM.yyyy HH:mm'), duration: 3600)
 
         Task testTask6 = new Task(name: "test1",
-                start: LocalDateTime.parse("14.04.2023 21:00", 'dd.MM.yyyy HH:mm'),
-                finish: LocalDateTime.parse("14.04.2023 22:00", 'dd.MM.yyyy HH:mm'),
+                start: LocalDateTime.parse("10.05.2023 21:00", 'dd.MM.yyyy HH:mm'),
+                finish: LocalDateTime.parse("10.05.2023 22:00", 'dd.MM.yyyy HH:mm'),
                 actions: []
         )
 
@@ -78,6 +78,6 @@ class TaskDBTest extends GroovyTestCase {
 
         db += testTask6
 
-        assertEquals(1, db.getTasksByDate('14.04.2023').size())
+        assertEquals(1, db.getTasksByDate('10.05.2023').size())
     }
 }
