@@ -1,0 +1,13 @@
+version: "3.3"
+services:
+  todo-list:
+    image: a1ntwan/groovy_developer_todo-list:0.1
+    container_name: todo-list
+    ports:
+      - "8080:8080"
+    networks:
+      - webapp_lan
+
+networks:
+  webapp_lan:
+    driver: bridge
