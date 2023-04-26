@@ -117,7 +117,7 @@ class ActionController extends RestfulController {
             flash.message = AppUtil.infoMessage(g.message(code: "saved"))
             num = 1
             task = null
-            redirect(controller: "task", action: "index")
+            render contentType: "text/json", text: "{'status':'ok', 'id': ${request.JSON.task}}"
         }
     }
 
@@ -134,7 +134,7 @@ class ActionController extends RestfulController {
                 redirect(controller: "action", action: "edit", params: [num: 1])
             } else {
                 flash.message = AppUtil.infoMessage(g.message(code: "updated"))
-                redirect(controller: "task", action: "details")
+                render contentType: "text/json", text: "{'status':'ok', 'id': ${request.JSON.action}}"
             }
         }
     }
