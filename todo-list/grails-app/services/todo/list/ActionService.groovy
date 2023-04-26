@@ -97,7 +97,6 @@ class ActionService {
         }
 
         def response = AppUtil.saveResponse(false, result[1])
-//        if ((result[0].actions) && (result[0].actions.size() == num) && (result[0].duration >= result[0].actions*.duration.sum())) {
         if ((result[0].actions) && (result[0].actions.size() == num) && (result[0].duration >= response.model*.model*.duration.sum())) {
         result[0].save(flush: true)
             response.isSuccess = true

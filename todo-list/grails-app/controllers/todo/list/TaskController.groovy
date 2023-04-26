@@ -1,6 +1,7 @@
 package todo.list
 
 import grails.rest.RestfulController
+import groovy.json.JsonSlurper
 
 class TaskController extends RestfulController {
 
@@ -134,7 +135,7 @@ class TaskController extends RestfulController {
                 chain(controller: "action", action: "create", model: [params: [num: num, task: task, models: flash.redirectParams]])
             } else {
                 flash.message = AppUtil.infoMessage(g.message(code: "saved"))
-                redirect(controller: "task", action: "index")
+                render contentType: "text/json", text: "{'status':'ok', 'id': ${task.id}}"
             }
         }
     }
@@ -152,7 +153,7 @@ class TaskController extends RestfulController {
                 redirect(controller: "task", action: "edit")
             } else {
                 flash.message = AppUtil.infoMessage(g.message(code: "updated"))
-                redirect(controller: "task", action: "index")
+                render contentType: "text/json", text: "{'status':'ok', 'id': ${request.JSON.task}}"
             }
         }
     }
