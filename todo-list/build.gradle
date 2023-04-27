@@ -45,7 +45,9 @@ dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     compileOnly "io.micronaut:micronaut-inject-groovy"
     console "org.grails:grails-console"
-    implementation "com.google.guava:guava-base:+"
+    implementation "com.google.guava:guava:23.0"
+    implementation "com.google.code.gson:gson:2.8.2"
+    implementation "com.google.guava:guava-base:r03"
     implementation "org.springframework.boot:spring-boot-starter-logging"
     implementation "org.springframework.boot:spring-boot-starter-validation"
     implementation "org.springframework.boot:spring-boot-autoconfigure"
@@ -73,16 +75,20 @@ dependencies {
     runtimeOnly "org.apache.tomcat:tomcat-jdbc"
     runtimeOnly "javax.xml.bind:jaxb-api:2.3.1"
     runtimeOnly "com.bertramlabs.plugins:asset-pipeline-grails:3.4.7"
+    testImplementation 'net.sourceforge.htmlunit:htmlunit:2.35.0'
+    testImplementation 'org.codehaus.groovy:groovy-all:3.0.8'
+    testImplementation 'org.spockframework:spock-core:2.0-groovy-3.0'
     testImplementation "io.micronaut:micronaut-inject-groovy"
     testImplementation "org.grails:grails-gorm-testing-support"
     testImplementation "org.mockito:mockito-core"
     testImplementation "org.grails:grails-web-testing-support"
     testImplementation "org.grails.plugins:geb"
-    testImplementation "org.seleniumhq.selenium:selenium-remote-driver:4.0.0"
-    testImplementation "org.seleniumhq.selenium:selenium-api:4.0.0"
-    testImplementation "org.seleniumhq.selenium:selenium-support:4.0.0"
-    testRuntimeOnly "org.seleniumhq.selenium:selenium-chrome-driver:4.0.0"
-    testRuntimeOnly "org.seleniumhq.selenium:selenium-firefox-driver:4.0.0"
+    testImplementation "org.seleniumhq.selenium:htmlunit-driver:2.35.1"
+    testImplementation "org.seleniumhq.selenium:selenium-remote-driver:3.141.59"
+    testImplementation "org.seleniumhq.selenium:selenium-api:3.141.59"
+    testImplementation "org.seleniumhq.selenium:selenium-support:3.141.59"
+    testImplementation "org.seleniumhq.selenium:selenium-chrome-driver:3.141.59"
+    testImplementation "org.seleniumhq.selenium:selenium-firefox-driver:3.141.59"
 }
 
 bootRun {
@@ -129,6 +135,10 @@ tasks.withType(Test) {
     }
 }
 
+integrationTest {
+    systemProperties System.properties
+    testLogging.showStandardStreams = true
+}
 
 assets {
     minifyJs = true
