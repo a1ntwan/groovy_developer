@@ -37,10 +37,6 @@ configurations {
     }
 }
 
-war {
-    archiveName = 'ROOT.war'
-}
-
 dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     compileOnly "io.micronaut:micronaut-inject-groovy"
@@ -143,6 +139,13 @@ integrationTest {
 assets {
     minifyJs = true
     minifyCss = true
+}
+
+task renameArtifacts (type: Copy) {
+    from ('./build/libs/')
+    include 'todo-list-0.1.war'
+    destinationDir file('./build/libs/')
+    rename 'todo-list-0.1.war', "ROOT.war"
 }
 
 apply plugin: "com.google.cloud.tools.jib"
