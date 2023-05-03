@@ -9,6 +9,8 @@ services:
     user: root
     ports:
       - 8888:8888
+      - 50000:50000 
     volumes:
       - /var/lib/docker/volumes/jenkins/_data:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker

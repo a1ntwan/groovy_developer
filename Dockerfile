@@ -1,7 +1,7 @@
-FROM ubuntu:20.04
+FROM jenkinsci/slave:latest
 
 ENV TZ=Europe/Moscow
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt update -y && apt install -y software-properties-common && apt clean
-RUN add-apt-repository ppa:mozillateam/ppa
-RUN apt update -y && apt install -y firefox && apt clean
+USER root
+RUN rm -rf /etc/apt/sources.list.d/stretch-backports.list
+RUN apt update -y && apt install -y firefox
