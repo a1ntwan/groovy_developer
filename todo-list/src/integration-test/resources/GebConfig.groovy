@@ -1,5 +1,6 @@
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.firefox.FirefoxDriver
+import org.openqa.selenium.firefox.FirefoxOptions
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 
 
@@ -14,6 +15,8 @@ environments {
     }
 
     firefox {
-        driver = { new FirefoxDriver() }
+        FirefoxOptions options = new FirefoxOptions()
+        options.setHeadless(true)
+        driver = { new FirefoxDriver(options) }
     }
 }
