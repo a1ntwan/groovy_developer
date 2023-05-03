@@ -1,0 +1,14 @@
+version: '3.3'
+services:
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    environment: 
+      - JENKINS_OPTS="--httpPort=8888"
+    privileged: true
+    user: root
+    ports:
+      - 8888:8888
+    volumes:
+      - /var/lib/docker/volumes/jenkins/_data:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
