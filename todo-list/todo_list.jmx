@@ -1,0 +1,526 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.5">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Plan" enabled="true">
+      <stringProp name="TestPlan.comments"></stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">true</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <collectionProp name="Arguments.arguments"/>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath"></stringProp>
+    </TestPlan>
+    <hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="todo-list" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">1</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">100</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">3</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">false</boolProp>
+      </ThreadGroup>
+      <hashTree>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Create Task" enabled="true">
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="script">import org.apache.http.HttpHeaders
+import org.apache.http.client.config.RequestConfig
+import org.apache.http.client.methods.HttpUriRequest
+import org.apache.http.client.methods.RequestBuilder
+import org.apache.http.impl.client.HttpClientBuilder
+import org.apache.http.util.EntityUtils
+import org.apache.http.entity.StringEntity
+
+
+
+static def createTask(String url, String method, String body) {
+   RequestConfig requestConfig = RequestConfig.custom()
+           .setConnectTimeout(2000)
+           .build()
+
+   StringEntity entity = new StringEntity(body, &quot;UTF-8&quot;)
+
+   HttpUriRequest request = RequestBuilder.create(method)
+           .setConfig(requestConfig)
+           .setUri(url)
+           .setHeader(HttpHeaders.CONTENT_TYPE, &quot;application/json;charset=UTF-8&quot;)
+           .setEntity(entity)
+           .build()
+
+   HttpClientBuilder.create().build().withCloseable { client -&gt;
+
+       client.execute(request).withCloseable { resp -&gt;
+
+           def status = resp.getStatusLine()
+           def headers = resp.getAllHeaders()
+           def respEntity = EntityUtils.toString(resp.getEntity(), &quot;UTF-8&quot;)
+
+           return respEntity
+       }
+   }
+}
+
+
+def url = &quot;http://127.0.0.1:8080/api/tasks/add&quot;
+def method = &quot;POST&quot;
+def body =&apos;{&quot;name&quot;:&quot;newTask&quot;, &quot;date&quot;:&quot;${DATE}&quot;, &quot;start&quot;:&quot;08:00&quot;, &quot;finish&quot;:&quot;10:00&quot;, actions: [{&quot;activity&quot;:&quot;hello&quot;,&quot;start&quot;:&quot;08:00&quot;,&quot;finish&quot;:&quot;08:30&quot;}, {&quot;activity&quot;:&quot;world&quot;,&quot;start&quot;:&quot;08:30&quot;,&quot;finish&quot;:&quot;09:00&quot;}]}&apos;
+
+def result = createTask(url, method, body)</stringProp>
+          <stringProp name="scriptLanguage">groovy</stringProp>
+        </JSR223Sampler>
+        <hashTree>
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">import java.time.LocalDate
+import java.time.temporal.ChronoUnit
+
+LocalDate start = LocalDate.of(2024, 1, 1)
+LocalDate finish = LocalDate.of(2025, 1, 1)
+long days = ChronoUnit.DAYS.between(start, finish)
+LocalDate randomDate = start.plusDays(new Random().nextInt((int) days + 1))
+
+String date = randomDate.toString()
+
+vars.put(&quot;DATE&quot;,date)</stringProp>
+          </JSR223PreProcessor>
+          <hashTree/>
+          <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="JSR223 Assertion" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">def response = prev.getResponseDataAsString()
+
+if (response == &apos; &apos;) {
+	AssertionResult.setFailure(true)
+	AssertionResult.setFailureMessage(&quot;Can&apos;t create new task&quot;)
+}
+</stringProp>
+          </JSR223Assertion>
+          <hashTree/>
+          <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+            <boolProp name="ResultCollector.error_logging">false</boolProp>
+            <objProp>
+              <name>saveConfig</name>
+              <value class="SampleSaveConfiguration">
+                <time>true</time>
+                <latency>true</latency>
+                <timestamp>true</timestamp>
+                <success>true</success>
+                <label>true</label>
+                <code>true</code>
+                <message>true</message>
+                <threadName>true</threadName>
+                <dataType>true</dataType>
+                <encoding>false</encoding>
+                <assertions>true</assertions>
+                <subresults>true</subresults>
+                <responseData>false</responseData>
+                <samplerData>false</samplerData>
+                <xml>false</xml>
+                <fieldNames>true</fieldNames>
+                <responseHeaders>false</responseHeaders>
+                <requestHeaders>false</requestHeaders>
+                <responseDataOnError>false</responseDataOnError>
+                <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+                <assertionsResultsToSave>0</assertionsResultsToSave>
+                <bytes>true</bytes>
+                <sentBytes>true</sentBytes>
+                <url>true</url>
+                <threadCounts>true</threadCounts>
+                <idleTime>true</idleTime>
+                <connectTime>true</connectTime>
+              </value>
+            </objProp>
+            <stringProp name="filename"></stringProp>
+          </ResultCollector>
+          <hashTree/>
+        </hashTree>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Rename Task" enabled="true">
+          <stringProp name="scriptLanguage">groovy</stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="script">import org.apache.http.HttpHeaders
+import org.apache.http.client.config.RequestConfig
+import org.apache.http.client.methods.HttpUriRequest
+import org.apache.http.client.methods.RequestBuilder
+import org.apache.http.impl.client.HttpClientBuilder
+import org.apache.http.util.EntityUtils
+import org.apache.http.entity.StringEntity
+
+
+
+static def renameTask(String url, String method, String body) {
+   RequestConfig requestConfig = RequestConfig.custom()
+           .setConnectTimeout(2000)
+           .build()
+
+   StringEntity entity = new StringEntity(body, &quot;UTF-8&quot;)
+
+   HttpUriRequest request = RequestBuilder.create(method)
+           .setConfig(requestConfig)
+           .setUri(url)
+           .setHeader(HttpHeaders.CONTENT_TYPE, &quot;application/json;charset=UTF-8&quot;)
+           .setEntity(entity)
+           .build()
+
+   HttpClientBuilder.create().build().withCloseable { client -&gt;
+
+       client.execute(request).withCloseable { resp -&gt;
+
+           def status = resp.getStatusLine()
+           def headers = resp.getAllHeaders()
+           def respEntity = EntityUtils.toString(resp.getEntity(), &quot;UTF-8&quot;)
+
+           return respEntity
+       }
+   }
+}
+
+
+def url = &quot;http://127.0.0.1:8080/api/tasks/update&quot;
+def method = &quot;PUT&quot;
+def body = &apos;{&quot;task&quot;:&quot;${TASK_ID}&quot;,&quot;name&quot;:&quot;renamedTask&quot;,&quot;date&quot;:&quot;${DATE}&quot;,&quot;start&quot;:&quot;08:00&quot;,&quot;finish&quot;:&quot;10:00&quot;}&apos;
+
+def result = renameTask(url, method, body)</stringProp>
+        </JSR223Sampler>
+        <hashTree>
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">import groovy.json.JsonSlurper
+import groovy.json.JsonParserType
+
+
+def response = prev.getResponseDataAsString()
+
+def responseJSON = new JsonSlurper().setType(JsonParserType.LAX).parseText(response)
+vars.put(&quot;TASK_ID&quot;, responseJSON.id.toString())
+</stringProp>
+          </JSR223PreProcessor>
+          <hashTree/>
+          <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="JSR223 Assertion" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">def response = prev.getResponseDataAsString()
+
+if (response == &apos; &apos;) {
+	AssertionResult.setFailure(true)
+	AssertionResult.setFailureMessage(&quot;Can&apos;t rename task&quot;)
+}
+</stringProp>
+          </JSR223Assertion>
+          <hashTree/>
+          <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+            <boolProp name="ResultCollector.error_logging">false</boolProp>
+            <objProp>
+              <name>saveConfig</name>
+              <value class="SampleSaveConfiguration">
+                <time>true</time>
+                <latency>true</latency>
+                <timestamp>true</timestamp>
+                <success>true</success>
+                <label>true</label>
+                <code>true</code>
+                <message>true</message>
+                <threadName>true</threadName>
+                <dataType>true</dataType>
+                <encoding>false</encoding>
+                <assertions>true</assertions>
+                <subresults>true</subresults>
+                <responseData>false</responseData>
+                <samplerData>false</samplerData>
+                <xml>false</xml>
+                <fieldNames>true</fieldNames>
+                <responseHeaders>false</responseHeaders>
+                <requestHeaders>false</requestHeaders>
+                <responseDataOnError>false</responseDataOnError>
+                <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+                <assertionsResultsToSave>0</assertionsResultsToSave>
+                <bytes>true</bytes>
+                <sentBytes>true</sentBytes>
+                <url>true</url>
+                <threadCounts>true</threadCounts>
+                <idleTime>true</idleTime>
+                <connectTime>true</connectTime>
+              </value>
+            </objProp>
+            <stringProp name="filename"></stringProp>
+          </ResultCollector>
+          <hashTree/>
+        </hashTree>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Add Action to Task" enabled="true">
+          <stringProp name="scriptLanguage">groovy</stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="script">import org.apache.http.HttpHeaders
+import org.apache.http.client.config.RequestConfig
+import org.apache.http.client.methods.HttpUriRequest
+import org.apache.http.client.methods.RequestBuilder
+import org.apache.http.impl.client.HttpClientBuilder
+import org.apache.http.util.EntityUtils
+import org.apache.http.entity.StringEntity
+
+
+
+static def actionsToTask(String url, String method, String body) {
+   RequestConfig requestConfig = RequestConfig.custom()
+           .setConnectTimeout(2000)
+           .build()
+
+   StringEntity entity = new StringEntity(body, &quot;UTF-8&quot;)
+
+   HttpUriRequest request = RequestBuilder.create(method)
+           .setConfig(requestConfig)
+           .setUri(url)
+           .setHeader(HttpHeaders.CONTENT_TYPE, &quot;application/json;charset=UTF-8&quot;)
+           .setEntity(entity)
+           .build()
+
+   HttpClientBuilder.create().build().withCloseable { client -&gt;
+
+       client.execute(request).withCloseable { resp -&gt;
+
+           def status = resp.getStatusLine()
+           def headers = resp.getAllHeaders()
+           def respEntity = EntityUtils.toString(resp.getEntity(), &quot;UTF-8&quot;)
+
+           return respEntity
+       }
+   }
+}
+
+
+def url = &quot;http://127.0.0.1:8080/api/actions/add&quot;
+def method = &quot;POST&quot;
+def body = &apos;{&quot;task&quot;:&quot;${TASK_ID}&quot;,&quot;activity&quot;:&quot;newActivity&quot;,&quot;start&quot;:&quot;09:00&quot;,&quot;finish&quot;:&quot;10:00&quot;}&apos;
+
+def result = actionsToTask(url, method, body)</stringProp>
+        </JSR223Sampler>
+        <hashTree>
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">import groovy.json.JsonSlurper
+import groovy.json.JsonParserType
+
+def response = prev.getResponseDataAsString()
+
+def responseJSON = new JsonSlurper().setType(JsonParserType.LAX).parseText(response)
+vars.put(&quot;TASK_ID&quot;, responseJSON.id.toString())
+
+</stringProp>
+          </JSR223PreProcessor>
+          <hashTree/>
+          <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="JSR223 Assertion" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">def response = prev.getResponseDataAsString()
+
+if (response == &apos; &apos;) {
+	AssertionResult.setFailure(true)
+	AssertionResult.setFailureMessage(&quot;Can&apos;t add action&quot;)
+}
+</stringProp>
+          </JSR223Assertion>
+          <hashTree/>
+          <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+            <boolProp name="ResultCollector.error_logging">false</boolProp>
+            <objProp>
+              <name>saveConfig</name>
+              <value class="SampleSaveConfiguration">
+                <time>true</time>
+                <latency>true</latency>
+                <timestamp>true</timestamp>
+                <success>true</success>
+                <label>true</label>
+                <code>true</code>
+                <message>true</message>
+                <threadName>true</threadName>
+                <dataType>true</dataType>
+                <encoding>false</encoding>
+                <assertions>true</assertions>
+                <subresults>true</subresults>
+                <responseData>false</responseData>
+                <samplerData>false</samplerData>
+                <xml>false</xml>
+                <fieldNames>true</fieldNames>
+                <responseHeaders>false</responseHeaders>
+                <requestHeaders>false</requestHeaders>
+                <responseDataOnError>false</responseDataOnError>
+                <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+                <assertionsResultsToSave>0</assertionsResultsToSave>
+                <bytes>true</bytes>
+                <sentBytes>true</sentBytes>
+                <url>true</url>
+                <threadCounts>true</threadCounts>
+                <idleTime>true</idleTime>
+                <connectTime>true</connectTime>
+              </value>
+            </objProp>
+            <stringProp name="filename"></stringProp>
+          </ResultCollector>
+          <hashTree/>
+        </hashTree>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Delete task" enabled="true">
+          <stringProp name="scriptLanguage">groovy</stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="script">import org.apache.http.HttpHeaders
+import org.apache.http.client.config.RequestConfig
+import org.apache.http.client.methods.HttpUriRequest
+import org.apache.http.client.methods.RequestBuilder
+import org.apache.http.impl.client.HttpClientBuilder
+import org.apache.http.util.EntityUtils
+import org.apache.http.entity.StringEntity
+
+
+
+static def deleteTask(String url, String method) {
+   RequestConfig requestConfig = RequestConfig.custom()
+           .setConnectTimeout(2000)
+           .build()
+
+
+   HttpUriRequest request = RequestBuilder.create(method)
+           .setConfig(requestConfig)
+           .setUri(url)
+           .setHeader(HttpHeaders.CONTENT_TYPE, &quot;application/json;charset=UTF-8&quot;)
+           .build()
+
+   HttpClientBuilder.create().build().withCloseable { client -&gt;
+
+       client.execute(request).withCloseable { resp -&gt;
+
+           def status = resp.getStatusLine()
+           def headers = resp.getAllHeaders()
+           def respEntity = EntityUtils.toString(resp.getEntity(), &quot;UTF-8&quot;)
+
+           return respEntity
+       }
+   }
+}
+
+
+def url = &quot;http://127.0.0.1:8080/tasks/${TASK_ID}&quot;
+def method = &quot;DELETE&quot;
+
+
+def result = deleteTask(url, method)</stringProp>
+        </JSR223Sampler>
+        <hashTree>
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">import groovy.json.JsonSlurper
+import groovy.json.JsonParserType
+
+def response = prev.getResponseDataAsString()
+
+def responseJSON = new JsonSlurper().setType(JsonParserType.LAX).parseText(response)
+vars.put(&quot;TASK_ID&quot;, responseJSON.id.toString())
+
+</stringProp>
+          </JSR223PreProcessor>
+          <hashTree/>
+          <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+            <boolProp name="ResultCollector.error_logging">false</boolProp>
+            <objProp>
+              <name>saveConfig</name>
+              <value class="SampleSaveConfiguration">
+                <time>true</time>
+                <latency>true</latency>
+                <timestamp>true</timestamp>
+                <success>true</success>
+                <label>true</label>
+                <code>true</code>
+                <message>true</message>
+                <threadName>true</threadName>
+                <dataType>true</dataType>
+                <encoding>false</encoding>
+                <assertions>true</assertions>
+                <subresults>true</subresults>
+                <responseData>false</responseData>
+                <samplerData>false</samplerData>
+                <xml>false</xml>
+                <fieldNames>true</fieldNames>
+                <responseHeaders>false</responseHeaders>
+                <requestHeaders>false</requestHeaders>
+                <responseDataOnError>false</responseDataOnError>
+                <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+                <assertionsResultsToSave>0</assertionsResultsToSave>
+                <bytes>true</bytes>
+                <sentBytes>true</sentBytes>
+                <url>true</url>
+                <threadCounts>true</threadCounts>
+                <idleTime>true</idleTime>
+                <connectTime>true</connectTime>
+              </value>
+            </objProp>
+            <stringProp name="filename"></stringProp>
+          </ResultCollector>
+          <hashTree/>
+        </hashTree>
+        <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="Graph Results" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>
