@@ -1,0 +1,116 @@
+properties([
+        parameters([
+            extendedChoice(name: 'STEPS', description: 'Choose step you want to include', multiSelectDelimiter: ',', type: 'PT_CHECKBOX', value: 'build_image,unit_tests,integrational_tests,build_app,stress_test', visibleItemCount: 6),
+            booleanParam(name: 'TG_ALERT', description: 'Choose to send notifications to TG', defaultValue: false),
+            booleanParam(name: 'JMETER_INFINITE', description: 'Choose to run Jmeter in a loop', defaultValue: false)    
+        ])
+])
+
+node {
+    
+    try {
+        
+        stage("CLEAN WORKSPACE") {
+            cleanWs()
+        }
+        
+        if (STEPS.contains('build_image')) {
+        
+            stage("BUILD FIREFOX IMAGE") {
+                build job: 'otus_build', parameters: [[$class: 'StringParameterValue', name: 'FIREFOX_TAG', value: 'test']]
+            }
+        }
+        
+        if (STEPS.contains('unit_tests')) {
+        
+            stage("RUN UNIT TESTS") {
+                echo "Run unit tests"
+                
+                git branch: 'main', credentialsId: 'github', url: 'git@github.com:a1ntwan/groovy_developer.git'
+                dir("${WORKSPACE}/todo-list") {
+                    sh(script: "./gradlew test", returnStdout: true)
+                }    
+                
+            }
+        }
+        
+        if (STEPS.contains('integrational_tests')) {
+            
+            stage("RUN INTEGRATIONAL TESTS") {
+                echo "Run tests on slave"
+                
+                node('integrational-tests-slave') {
+                    git branch: 'main', credentialsId: 'github', url: 'git@github.com:a1ntwan/groovy_developer.git'
+                    dir("${WORKSPACE}/todo-list") {
+                        sh(script: "./gradlew -Dgeb.env=firefox integrationTest", returnStdout: true)
+                    }
+                }    
+                
+            }    
+        }
+        
+        if (STEPS.contains('build_app')) {
+        
+            stage("BUILD ") {
+                echo "Build image"
+                
+                git branch: 'main', credentialsId: 'github', url: 'git@github.com:a1ntwan/groovy_developer.git'
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    dir("${WORKSPACE}/todo-list") {
+                        sh("grails -Dgrails.env=development war")
+                        sh("ls -la ./build/libs/")
+                        sh("./gradlew -p ${WORKSPACE}/todo-list -Dgrails.env=development renameArtifacts jib -Djib.to.auth.username=${USERNAME} -Djib.to.auth.password=${PASSWORD}")
+                    }    
+                }    
+            }
+        
+        }
+        
+        if (STEPS.contains('stress_test')) {
+            stage("DEPLOY AND STRESS TEST") {
+                echo "Deploy image"
+                
+                sh("docker run --name todo -d --rm -p 8080:8080 --network groovy_developer_otus_network a1ntwan/todo-list_todo-list:latest")
+                sh("sleep 30")
+                        
+                echo "Run jmeter"
+                
+                if (!params.JMETER_INFINITE) {
+                    dir('/var/jenkins_home/apache-jmeter-5.5/bin'){
+                        sh "./jmeter -Jjmeter.save.saveservice.output_format=xml -n -t /var/jenkins_home/apache-jmeter-5.5/projects/todo-list.jmx -l ${WORKSPACE}/stress_test_results.jtl"
+                    }
+                } else {
+                    dir('/var/jenkins_home/apache-jmeter-5.5/bin'){
+                        sh "./jmeter -Jjmeter.save.saveservice.output_format=xml -n -t /var/jenkins_home/apache-jmeter-5.5/projects/todo-list-inf.jmx -l ${WORKSPACE}/stress_test_results.jtl"
+                    }
+                }    
+                
+                perfReport filterRegex: '', modePerformancePerTestCase: true, modeThroughput: true, showTrendGraphs: true, sourceDataFiles: "${WORKSPACE}/stress_test_results.jtl"
+                
+                sh("docker stop todo")
+            }    
+        }
+    } catch (Exception err) {
+        currentBuild.result = 'FAILURE'
+        
+    } finally {
+    
+        if (params.TG_ALERT){
+            stage("ALARM TO TG ") {
+            
+                wrap([$class: 'BuildUser']) {
+                    String cause = currentBuild.rawBuild.getCauses()[0]
+                    echo "$cause"
+                    if (cause.contains("TimerTrigger")){
+                        env.BUILD_USER_FIRST_NAME = "timer"
+                    }
+                    if (cause.contains("UpstreamCause")){
+                        env.BUILD_USER_FIRST_NAME = cause.upstreamProject
+                    }
+                    
+                    build job: 'otus_tg', parameters: [[$class: 'StringParameterValue', name: 'msg_text', value: "${env.BUILD_URL} started by ${env.BUILD_USER_FIRST_NAME} and has result ${currentBuild.currentResult}"]]
+        		}
+            }
+        }
+    }
+}    

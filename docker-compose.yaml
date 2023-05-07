@@ -11,10 +11,13 @@ services:
       - 8888:8888
       - 50000:50000 
     volumes:
-      - /var/lib/docker/volumes/jenkins/_data:/var/jenkins_home
-      - /var/lib/docker/volumes/jenkins/_data/root:/root
+      - /var/lib/docker/volumes/jenkins/_data/jenkins/var/jenkins_home:/var/jenkins_home
+      - /var/lib/docker/volumes/jenkins/_data/jenkins/root:/root
       - /var/run/docker.sock:/var/run/docker.sock
       - /usr/bin/docker:/usr/bin/docker
+      - /opt/apache-jmeter-5.5:/var/jenkins_home/apache-jmeter-5.5  
+    networks:
+      - otus_network
 
   prometheus:
     image: prom/prometheus:latest
@@ -29,6 +32,8 @@ services:
       TZ: "Europe/Moscow"
     volumes:
       - /var/lib/docker/volumes/prometheus/_data/prometheus/:/etc/prometheus/
+    networks:
+      - otus_network
 
   grafana:
     image: grafana/grafana
@@ -45,3 +50,9 @@ services:
     volumes:
       - /var/lib/docker/volumes/jenkins/_data/grafana/:/var/lib/grafana
       - /var/lib/docker/volumes/jenkins/_data/grafana/provisioning/:/etc/grafana/provisioning/
+    networks:
+      - otus_network
+
+networks:
+  otus_network:
+    driver: bridge        

@@ -1,0 +1,24 @@
+properties([
+        parameters([
+                string(name: 'msg_text', description: '')
+        ])
+])
+
+node() {
+    stage("Send Message") {
+        withCredentials([string(credentialsId: 'TG_API_TOKEN', variable: 'TG_API_TOKEN'), string(credentialsId: 'MONITORING_CHAT_ID', variable: 'MONITORING_CHAT_ID')]){
+            if (msg_text.contains('SUCCESS')){
+                msg_text = msg_text.replace('SUCCESS', 'SUCCESS \u2705')
+            }
+            if (msg_text.contains('FAILURE')){
+                msg_text = msg_text.replace('FAILURE', 'FAILURE \u274C')
+            }
+            if (msg_text.contains('UNSTABLE')){
+                msg_text = msg_text.replace('UNSTABLE', 'UNSTABLE \u26A0')
+            }
+            sh ("""
+                curl -s -k -X POST https://api.telegram.org./bot${TG_API_TOKEN}/sendMessage -d chat_id=${MONITORING_CHAT_ID} -d parse_mode=markdown -d text="*${msg_text}*"
+            """)
+        }
+    }
+}

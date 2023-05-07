@@ -1,0 +1,19 @@
+properties([
+  parameters([
+    string(name: 'FIREFOX_TAG', defaultValue: 'test')
+  ])
+])
+
+node {
+    stage("BUILD IMAGE") {
+        echo "Build image for integration tests"
+        git branch: 'main', credentialsId: 'github', url: 'git@github.com:a1ntwan/groovy_developer.git'
+        
+        docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
+        
+            dockerImage = docker.build("a1ntwan/firefox:${FIREFOX_TAG}")
+            
+            dockerImage.push()
+        }    
+    }        
+}
